@@ -1,4 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from app import crud, models, schemas
 from app.database import engine, AsyncSessionLocal
@@ -90,6 +92,12 @@ async def search_athletes(query: str, skip: int = 0, limit: int = 10, db: AsyncS
 
 mcp = FastApiMCP(app)
 mcp.mount_http()
+
+app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
+
+@app.get("/")
+async def read_index():
+    return FileResponse('frontend/index.html')
 
 @app.get("/chat/")
 async def chat(message: str):

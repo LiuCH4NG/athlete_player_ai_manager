@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>运动员管理</title>
+    <link rel="stylesheet" href="frontend/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>运动员管理</h1>
+            <div class="toolbar">
+                <input type="text" id="search-input" placeholder="搜索运动员...">
+                <button id="add-athlete-btn">添加运动员</button>
+            </div>
+        </header>
+
+        <main>
+            <table id="athlete-table">
+                <thead>
+                    <tr>
+                        <th>姓名</th>
+                        <th>年龄</th>
+                        <th>籍贯</th>
+                        <th>项目</th>
+                        <th>身高 (cm)</th>
+                        <th>体重 (kg)</th>
+                        <th>描述</th>
+                        <th>备注</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Athlete data will be inserted here -->
+                </tbody>
+            </table>
+        </main>
+    </div>
+
+    <div id="athlete-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 id="modal-title">添加运动员</h2>
+            <form id="athlete-form">
+                <input type="hidden" id="athlete-id">
+                <input type="text" id="name" placeholder="姓名" required>
+                <input type="number" id="age" placeholder="年龄">
+                <input type="text" id="hometown" placeholder="籍贯">
+                <input type="text" id="project" placeholder="项目">
+                <input type="number" id="height" placeholder="身高 (cm)">
+                <input type="number" id="weight" placeholder="体重 (kg)">
+                <textarea id="description" placeholder="描述"></textarea>
+                <textarea id="note" placeholder="备注"></textarea>
+                <button type="submit">保存</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="chat-window">
+        <div id="chat-header">对话助手</div>
+        <div id="chat-messages">
+            <div class="loading-indicator" style="display: none;"></div>
+        </div>
+        <div id="chat-input-container">
+            <input type="text" id="chat-input" placeholder="输入消息...">
+            <button id="chat-send-btn">发送</button>
+        </div>
+    </div>
+    <button id="chat-fab">💬</button>
+
+    <script src="frontend/script.js"></script>
+</body>
+</html>
