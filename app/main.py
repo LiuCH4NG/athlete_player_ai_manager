@@ -120,22 +120,27 @@ async def delete_athlete(athlete_id: int, db: AsyncSession = Depends(get_db)):
     return db_athlete
 
 
-@app.get(
+@app.post(
     "/athletes/search/",
     response_model=list[schemas.AthleteInDB],
     tags=["athletes"],
     operation_id="search_athletes",
 )
 async def search_athletes(
-    query: str, skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db)
+    search_params: schemas.AthleteSearch,
+    skip: int = 0,
+    limit: int = 10,
+    db: AsyncSession = Depends(get_db),
 ):
     """
     搜索运动员。
 
-    根据关键词搜索运动员，支持在姓名、项目、籍贯、描述、备注等字段中搜索。
+    根据一个或多个查询参数搜索运动员，支持在姓名、项目、籍贯、描述、备注等字段中搜索。
     返回匹配的运动员列表，支持分页。
     """
-    athletes = await crud.search_athletes(db, query=query, skip=skip, limit=limit)
+    athletes = await crud.search_athletes(
+        db, search_params=search_params, skip=skip, limit=limit
+    )
     return athletes
 
 

@@ -33,6 +33,23 @@ class AthleteUpdate(AthleteBase):
     remarks: Optional[str] = None
 
 
+class AthleteSearch(BaseModel):
+    name: Optional[str] = None
+    height: Optional[float] = None
+    weight: Optional[float] = None
+    description: Optional[str] = None
+    sport_event: Optional[str] = None
+    age: Optional[int] = None
+    hometown: Optional[str] = None
+    remarks: Optional[str] = None
+    min_age: Optional[int] = None
+    max_age: Optional[int] = None
+    min_height: Optional[float] = None
+    max_height: Optional[float] = None
+    min_weight: Optional[float] = None
+    max_weight: Optional[float] = None
+
+
 class AthleteInDB(AthleteBase):
     id: int
     created_at: datetime

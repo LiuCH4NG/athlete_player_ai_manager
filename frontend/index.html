@@ -12,8 +12,22 @@
         <header>
             <h1>运动员管理</h1>
             <div class="toolbar">
-                <input type="text" id="search-input" placeholder="搜索运动员 (姓名, 项目等)...">
                 <button id="add-athlete-btn" class="btn btn-primary">添加运动员</button>
+            </div>
+            <div class="search-form-container">
+                <form id="search-form" class="search-form">
+                    <input type="text" id="search-name" placeholder="姓名">
+                    <input type="text" id="search-sport-event" placeholder="项目">
+                    <input type="text" id="search-hometown" placeholder="籍贯">
+                    <input type="number" id="search-min-age" placeholder="最小年龄">
+                    <input type="number" id="search-max-age" placeholder="最大年龄">
+                    <input type="number" id="search-min-height" placeholder="最小身高(cm)">
+                    <input type="number" id="search-max-height" placeholder="最大身高(cm)">
+                    <input type="number" id="search-min-weight" placeholder="最小体重(kg)">
+                    <input type="number" id="search-max-weight" placeholder="最大体重(kg)">
+                    <button type="submit" class="btn btn-secondary">搜索</button>
+                    <button type="button" id="reset-search-btn" class="btn btn-secondary">重置</button>
+                </form>
             </div>
         </header>
 

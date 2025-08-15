@@ -1,11 +1,23 @@
 const apiUrl = 'http://127.0.0.1:8001/athletes/';
 const tableBody = document.querySelector('#athlete-table tbody');
-const searchInput = document.getElementById('search-input');
 const modal = document.getElementById('athlete-modal');
 const modalTitle = document.getElementById('modal-title');
 const form = document.getElementById('athlete-form');
 const addAthleteBtn = document.getElementById('add-athlete-btn');
 const closeBtn = document.querySelector('.close-btn');
+
+// Search form elements
+const searchForm = document.getElementById('search-form');
+const searchName = document.getElementById('search-name');
+const searchSportEvent = document.getElementById('search-sport-event');
+const searchHometown = document.getElementById('search-hometown');
+const searchMinAge = document.getElementById('search-min-age');
+const searchMaxAge = document.getElementById('search-max-age');
+const searchMinHeight = document.getElementById('search-min-height');
+const searchMaxHeight = document.getElementById('search-max-height');
+const searchMinWeight = document.getElementById('search-min-weight');
+const searchMaxWeight = document.getElementById('search-max-weight');
+const resetSearchBtn = document.getElementById('reset-search-btn');
 
 // Show modal
 function showModal() {
@@ -34,10 +46,21 @@ window.addEventListener('click', (e) => {
 });
 
 // Fetch and display athletes
-async function getAthletes(query = '') {
+async function getAthletes(searchParams = {}) {
     try {
-        const url = query ? `http://127.0.0.1:8001/athletes/search/?query=${query}` : apiUrl;
-        const response = await fetch(url);
+        let response;
+        if (Object.keys(searchParams).length > 0) {
+            response = await fetch(`${apiUrl}search/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(searchParams),
+            });
+        } else {
+            response = await fetch(apiUrl);
+        }
+
         const athletes = await response.json();
 
         tableBody.innerHTML = '';
@@ -143,8 +166,25 @@ async function deleteAthlete(id) {
 }
 
 // Search athletes
-searchInput.addEventListener('input', (e) => {
-    getAthletes(e.target.value);
+searchForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const searchParams = {};
+    if (searchName.value) searchParams.name = searchName.value;
+    if (searchSportEvent.value) searchParams.sport_event = searchSportEvent.value;
+    if (searchHometown.value) searchParams.hometown = searchHometown.value;
+    if (searchMinAge.value) searchParams.min_age = parseInt(searchMinAge.value);
+    if (searchMaxAge.value) searchParams.max_age = parseInt(searchMaxAge.value);
+    if (searchMinHeight.value) searchParams.min_height = parseFloat(searchMinHeight.value);
+    if (searchMaxHeight.value) searchParams.max_height = parseFloat(searchMaxHeight.value);
+    if (searchMinWeight.value) searchParams.min_weight = parseFloat(searchMinWeight.value);
+    if (searchMaxWeight.value) searchParams.max_weight = parseFloat(searchMaxWeight.value);
+
+    getAthletes(searchParams);
+});
+
+resetSearchBtn.addEventListener('click', () => {
+    searchForm.reset();
+    getAthletes({}); // Fetch all athletes
 });
 
 // Initial load
