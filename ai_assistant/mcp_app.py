@@ -3,12 +3,18 @@ from langchain_ollama import ChatOllama
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langgraph.prebuilt import create_react_agent
 from langchain_core.messages import SystemMessage
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+
+OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
+OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "qwen3:4b")
 
 def get_llm():
     llm = ChatOllama(
-        model="qwen3:4b",
-        base_url="http://172.16.34.247:11434",
+        model=OLLAMA_MODEL,
+        base_url=OLLAMA_BASE_URL,
         temperature=0.7,
         reasoning=True,
     )
@@ -37,7 +43,7 @@ async def create_agent():
             content="""你是一个帮助用户查询运动员信息的助手，你需要使用以下工具来帮助用户
             请注意：
             1. 如果输入的查询条件无法满足，请返回: 无法满足查询条件
-            2. 如果输入的问题与运动员无关，请返回: 对不起，仅支持运动员信息查询"
+            2. 如果输入的问题与运动员操作无关，请返回: 对不起，仅支持运动员信息查询"
             """
         ),
     )

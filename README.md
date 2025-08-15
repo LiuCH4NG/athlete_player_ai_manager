@@ -56,6 +56,9 @@
 确保你已经安装了 `uv` 工具。
 
 ```bash
+# 复制环境变量文件
+cp .env.example .env
+
 # 克隆项目
 git clone <repository-url>
 cd athlete_player_ai_manager
@@ -68,7 +71,7 @@ uv sync
 
 1.  **启动后端服务**:
     ```bash
-    uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    uvicorn app.main:app --reload --host 0.0.0.0 --port 8001
     ```
     (注意：如果前端 `script.js` 中配置的 API 端口是 8001，请将此处的端口改为 8001，或修改 `script.js` 中的 `apiUrl`)
 
