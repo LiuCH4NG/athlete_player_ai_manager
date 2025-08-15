@@ -3,6 +3,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app import crud, models, schemas
 from app.database import engine, AsyncSessionLocal
 
+from fastapi_mcp import FastApiMCP
+from ai_assistant.mcp_app import create_agent, run_agent
+
 # Create all tables
 async def init_db():
     async with engine.begin() as conn:
@@ -84,3 +87,14 @@ async def search_athletes(query: str, skip: int = 0, limit: int = 10, db: AsyncS
     """
     athletes = await crud.search_athletes(db, query=query, skip=skip, limit=limit)
     return athletes
+
+mcp = FastApiMCP(app)
+mcp.mount_http()
+
+@app.get("/chat/")
+async def chat(message: str):
+    agent = await create_agent()
+    info = await run_agent(agent, message)
+    return {
+        "info": info
+    }
