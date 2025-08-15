@@ -17,6 +17,7 @@ dependencies = [
     "langchain-ollama>=0.3.6",
     "langgraph>=0.6.5",
     "dotenv>=0.9.9",
+    "langchain-openai>=0.3.30",
 ]
 
 [dependency-groups]

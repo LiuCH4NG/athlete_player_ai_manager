@@ -1,5 +1,6 @@
 import asyncio
 from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langgraph.prebuilt import create_react_agent
 from langchain_core.messages import SystemMessage
@@ -8,16 +9,29 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+LLM_SERVE=os.environ.get("LLM_SERVE", "OLLAMA")
+
 OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
 OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "qwen3:4b")
 
+OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL", "http://127.0.0.1:1234/v1")
+OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-3.5-turbo")
+
 def get_llm():
-    llm = ChatOllama(
-        model=OLLAMA_MODEL,
-        base_url=OLLAMA_BASE_URL,
-        temperature=0.7,
-        reasoning=True,
-    )
+    if LLM_SERVE == "OLLAMA":
+        llm = ChatOllama(
+            model=OLLAMA_MODEL,
+            base_url=OLLAMA_BASE_URL,
+            temperature=0.7,
+            reasoning=True,
+        )
+    else:
+        llm = ChatOpenAI(
+            model=OPENAI_MODEL,
+            api_key='',
+            base_url=OPENAI_BASE_URL,
+            temperature=0.7,
+        )
     return llm
 
 
@@ -42,8 +56,7 @@ async def create_agent():
         prompt=SystemMessage(
             content="""你是一个帮助用户查询运动员信息的助手，你需要使用以下工具来帮助用户
             请注意：
-            1. 如果输入的查询条件无法满足，请返回: 无法满足查询条件
-            2. 如果输入的问题与运动员操作无关，请返回: 对不起，仅支持运动员信息查询"
+            1. 如果输入的查询条件无法满足，请使用你自己的知识进行回答。
             """
         ),
     )
