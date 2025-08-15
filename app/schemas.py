@@ -4,6 +4,7 @@ from datetime import datetime
 
 # Pydantic models for request and response
 
+
 class AthleteBase(BaseModel):
     name: str
     height: Optional[float] = None
@@ -14,9 +15,11 @@ class AthleteBase(BaseModel):
     hometown: Optional[str] = None
     remarks: Optional[str] = None
 
+
 class AthleteCreate(AthleteBase):
     # 可以添加创建时的特定验证或默认值
     pass
+
 
 class AthleteUpdate(AthleteBase):
     # 使用可选字段以便只更新提供的字段
@@ -28,6 +31,7 @@ class AthleteUpdate(AthleteBase):
     age: Optional[int] = None
     hometown: Optional[str] = None
     remarks: Optional[str] = None
+
 
 class AthleteInDB(AthleteBase):
     id: int

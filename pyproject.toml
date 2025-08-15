@@ -16,6 +16,7 @@ dependencies = [
     "langchain-mcp-adapters>=0.1.9",
     "langchain-ollama>=0.3.6",
     "langgraph>=0.6.5",
+    "dotenv>=0.9.9",
 ]
 
 [dependency-groups]

@@ -3,6 +3,7 @@ from sqlalchemy.future import select
 from sqlalchemy import or_
 from app import models, schemas
 
+
 async def get_athlete(db: AsyncSession, athlete_id: int):
     result = await db.execute(
         select(models.Athlete).filter(
@@ -12,13 +13,16 @@ async def get_athlete(db: AsyncSession, athlete_id: int):
     )
     return result.scalars().first()
 
+
 async def get_athletes(db: AsyncSession, skip: int = 0, limit: int = 10):
     result = await db.execute(
-        select(models.Athlete).filter(
-            models.Athlete.is_deleted == False
-        ).offset(skip).limit(limit)
+        select(models.Athlete)
+        .filter(models.Athlete.is_deleted == False)
+        .offset(skip)
+        .limit(limit)
     )
     return result.scalars().all()
+
 
 async def create_athlete(db: AsyncSession, athlete: schemas.AthleteCreate):
     db_athlete = models.Athlete(**athlete.model_dump())
@@ -27,11 +31,13 @@ async def create_athlete(db: AsyncSession, athlete: schemas.AthleteCreate):
     await db.refresh(db_athlete)
     return db_athlete
 
-async def update_athlete(db: AsyncSession, athlete_id: int, athlete: schemas.AthleteUpdate):
+
+async def update_athlete(
+    db: AsyncSession, athlete_id: int, athlete: schemas.AthleteUpdate
+):
     result = await db.execute(
         select(models.Athlete).filter(
-            models.Athlete.id == athlete_id, 
-            models.Athlete.is_deleted == False
+            models.Athlete.id == athlete_id, models.Athlete.is_deleted == False
         )
     )
     db_athlete = result.scalars().first()
@@ -43,11 +49,11 @@ async def update_athlete(db: AsyncSession, athlete_id: int, athlete: schemas.Ath
         await db.refresh(db_athlete)
     return db_athlete
 
+
 async def delete_athlete(db: AsyncSession, athlete_id: int):
     result = await db.execute(
         select(models.Athlete).filter(
-            models.Athlete.id == athlete_id, 
-            models.Athlete.is_deleted == False
+            models.Athlete.id == athlete_id, models.Athlete.is_deleted == False
         )
     )
     db_athlete = result.scalars().first()
@@ -57,17 +63,21 @@ async def delete_athlete(db: AsyncSession, athlete_id: int):
         await db.refresh(db_athlete)
     return db_athlete
 
+
 async def search_athletes(db: AsyncSession, query: str, skip: int = 0, limit: int = 10):
     result = await db.execute(
-        select(models.Athlete).filter(
+        select(models.Athlete)
+        .filter(
             models.Athlete.is_deleted == False,
             or_(
                 models.Athlete.name.ilike(f"%{query}%"),
                 models.Athlete.sport_event.ilike(f"%{query}%"),
                 models.Athlete.hometown.ilike(f"%{query}%"),
                 models.Athlete.description.ilike(f"%{query}%"),
-                models.Athlete.remarks.ilike(f"%{query}%")
-            )
-        ).offset(skip).limit(limit)
+                models.Athlete.remarks.ilike(f"%{query}%"),
+            ),
+        )
+        .offset(skip)
+        .limit(limit)
     )
     return result.scalars().all()
