@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>运动员管理</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="frontend/style.css">
 </head>
 <body>
@@ -11,8 +12,8 @@
         <header>
             <h1>运动员管理</h1>
             <div class="toolbar">
-                <input type="text" id="search-input" placeholder="搜索运动员...">
-                <button id="add-athlete-btn">添加运动员</button>
+                <input type="text" id="search-input" placeholder="搜索运动员 (姓名, 项目等)...">
+                <button id="add-athlete-btn" class="btn btn-primary">添加运动员</button>
             </div>
         </header>
 
@@ -24,8 +25,8 @@
                         <th>年龄</th>
                         <th>籍贯</th>
                         <th>项目</th>
-                        <th>身高 (cm)</th>
-                        <th>体重 (kg)</th>
+                        <th>身高(cm)</th>
+                        <th>体重(kg)</th>
                         <th>描述</th>
                         <th>备注</th>
                         <th>操作</th>
@@ -44,31 +45,59 @@
             <h2 id="modal-title">添加运动员</h2>
             <form id="athlete-form">
                 <input type="hidden" id="athlete-id">
-                <input type="text" id="name" placeholder="姓名" required>
-                <input type="number" id="age" placeholder="年龄">
-                <input type="text" id="hometown" placeholder="籍贯">
-                <input type="text" id="project" placeholder="项目">
-                <input type="number" id="height" placeholder="身高 (cm)">
-                <input type="number" id="weight" placeholder="体重 (kg)">
-                <textarea id="description" placeholder="描述"></textarea>
-                <textarea id="note" placeholder="备注"></textarea>
-                <button type="submit">保存</button>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name">姓名</label>
+                        <input type="text" id="name" placeholder="请输入姓名" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="age">年龄</label>
+                        <input type="number" id="age" placeholder="请输入年龄">
+                    </div>
+                    <div class="form-group">
+                        <label for="hometown">籍贯</label>
+                        <input type="text" id="hometown" placeholder="请输入籍贯">
+                    </div>
+                    <div class="form-group">
+                        <label for="sport_event">项目</label>
+                        <input type="text" id="sport_event" placeholder="请输入项目">
+                    </div>
+                    <div class="form-group">
+                        <label for="height">身高 (cm)</label>
+                        <input type="number" id="height" placeholder="请输入身高">
+                    </div>
+                    <div class="form-group">
+                        <label for="weight">体重 (kg)</label>
+                        <input type="number" id="weight" placeholder="请输入体重">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label for="description">描述</label>
+                        <textarea id="description" placeholder="请输入描述"></textarea>
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label for="remarks">备注</label>
+                        <textarea id="remarks" placeholder="请输入备注"></textarea>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
             </form>
         </div>
     </div>
 
     <div id="chat-window">
-        <div id="chat-header">对话助手</div>
+        <div id="chat-header">运动员管理助手</div>
         <div id="chat-messages">
-            <div class="loading-indicator" style="display: none;"></div>
         </div>
         <div id="chat-input-container">
             <input type="text" id="chat-input" placeholder="输入消息...">
-            <button id="chat-send-btn">发送</button>
+            <button id="chat-send-btn">➤</button>
         </div>
     </div>
     <button id="chat-fab">💬</button>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <script src="frontend/script.js"></script>
 </body>
 </html>

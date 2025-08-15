@@ -44,14 +44,14 @@ async function getAthletes(query = '') {
         athletes.forEach(athlete => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${athlete.name}</td>
-                <td>${athlete.age}</td>
-                <td>${athlete.hometown}</td>
-                <td>${athlete.project}</td>
-                <td>${athlete.height}</td>
-                <td>${athlete.weight}</td>
-                <td>${athlete.description}</td>
-                <td>${athlete.note}</td>
+                <td>${athlete.name || ''}</td>
+                <td>${athlete.age || ''}</td>
+                <td>${athlete.hometown || ''}</td>
+                <td>${athlete.sport_event || ''}</td>
+                <td>${athlete.height || ''}</td>
+                <td>${athlete.weight || ''}</td>
+                <td>${athlete.description || ''}</td>
+                <td>${athlete.remarks || ''}</td>
                 <td class="actions">
                     <button class="edit-btn" onclick="editAthlete(${athlete.id})">编辑</button>
                     <button class="delete-btn" onclick="deleteAthlete(${athlete.id})">删除</button>
@@ -71,13 +71,13 @@ form.addEventListener('submit', async (e) => {
     const id = document.getElementById('athlete-id').value;
     const athleteData = {
         name: document.getElementById('name').value,
-        age: parseInt(document.getElementById('age').value),
+        age: parseInt(document.getElementById('age').value) || null,
         hometown: document.getElementById('hometown').value,
-        project: document.getElementById('project').value,
-        height: parseFloat(document.getElementById('height').value),
-        weight: parseFloat(document.getElementById('weight').value),
+        sport_event: document.getElementById('sport_event').value,
+        height: parseFloat(document.getElementById('height').value) || null,
+        weight: parseFloat(document.getElementById('weight').value) || null,
         description: document.getElementById('description').value,
-        note: document.getElementById('note').value,
+        remarks: document.getElementById('remarks').value,
     };
 
     try {
@@ -108,14 +108,14 @@ async function editAthlete(id) {
 
         modalTitle.textContent = '编辑运动员';
         document.getElementById('athlete-id').value = athlete.id;
-        document.getElementById('name').value = athlete.name;
-        document.getElementById('age').value = athlete.age;
-        document.getElementById('hometown').value = athlete.hometown;
-        document.getElementById('project').value = athlete.project;
-        document.getElementById('height').value = athlete.height;
-        document.getElementById('weight').value = athlete.weight;
-        document.getElementById('description').value = athlete.description;
-        document.getElementById('note').value = athlete.note;
+        document.getElementById('name').value = athlete.name || '';
+        document.getElementById('age').value = athlete.age || '';
+        document.getElementById('hometown').value = athlete.hometown || '';
+        document.getElementById('sport_event').value = athlete.sport_event || '';
+        document.getElementById('height').value = athlete.height || '';
+        document.getElementById('weight').value = athlete.weight || '';
+        document.getElementById('description').value = athlete.description || '';
+        document.getElementById('remarks').value = athlete.remarks || '';
 
         showModal();
     } catch (error) {
@@ -156,11 +156,16 @@ const chatWindow = document.getElementById('chat-window');
 const chatMessages = document.getElementById('chat-messages');
 const chatInput = document.getElementById('chat-input');
 const chatSendBtn = document.getElementById('chat-send-btn');
-const loadingIndicator = document.querySelector('.loading-indicator');
+const markdownConverter = new showdown.Converter();
 
 chatFab.addEventListener('click', () => {
     const isChatOpen = chatWindow.style.display === 'flex';
     chatWindow.style.display = isChatOpen ? 'none' : 'flex';
+
+    // Add initial message if chat is opened for the first time
+    if (!isChatOpen && chatMessages.children.length === 0) {
+        appendMessage('您好！我是您的运动员管理助手，有什么可以帮助您的吗？', 'assistant-message');
+    }
 });
 
 async function sendMessage() {
@@ -169,7 +174,13 @@ async function sendMessage() {
 
     appendMessage(message, 'user-message');
     chatInput.value = '';
-    loadingIndicator.style.display = 'block';
+
+    // Create and append typing indicator
+    const typingIndicatorElement = document.createElement('div');
+    typingIndicatorElement.classList.add('typing-indicator', 'chat-message');
+    typingIndicatorElement.innerHTML = '<span></span><span></span><span></span>';
+    chatMessages.appendChild(typingIndicatorElement);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 
     try {
         const response = await fetch(`http://127.0.0.1:8001/chat/?message=${encodeURIComponent(message)}`);
@@ -180,14 +191,23 @@ async function sendMessage() {
         console.error('对话助手请求失败:', error);
         appendMessage('抱歉，我现在无法回答。', 'assistant-message');
     } finally {
-        loadingIndicator.style.display = 'none';
+        // Remove typing indicator
+        if (typingIndicatorElement.parentNode === chatMessages) {
+            chatMessages.removeChild(typingIndicatorElement);
+        }
     }
 }
 
 function appendMessage(text, className) {
     const messageElement = document.createElement('div');
     messageElement.classList.add('chat-message', className);
-    messageElement.textContent = text;
+
+    if (className === 'assistant-message') {
+        messageElement.innerHTML = markdownConverter.makeHtml(text);
+    } else {
+        messageElement.textContent = text;
+    }
+
     chatMessages.appendChild(messageElement);
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
