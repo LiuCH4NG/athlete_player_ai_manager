@@ -1,4 +1,19 @@
-const apiUrl = 'http://127.0.0.1:8001/athletes/';
+// --- 配置部分 ---
+// 为了便于部署和避免前端构建工具的复杂性（如处理 process.env），
+// 这里直接定义 API 的基础 URL。
+// 如果前端和后端部署在同一个域名下（例如，通过反向代理或直接由后端提供静态文件），
+// 则可以使用相对路径 '/'。
+// 如果前端和后端是分离部署的，则需要将 'apiBaseUrl' 设置为后端 API 的完整基础 URL。
+// 例如: const apiBaseUrl = 'http://your-backend-domain.com';
+// 注意：修改此配置后，需要重新部署前端代码。
+
+// 默认使用相对路径 '/'，假设前端静态文件和 API 由同一个后端服务提供
+const apiBaseUrl = '';
+// 如果是分离部署，请取消下面一行的注释，并设置正确的后端地址
+// const apiBaseUrl = 'http://your-backend-api-domain.com';
+
+const apiUrl = `${apiBaseUrl}/athletes/`;
+// --- 配置部分结束 ---
 const tableBody = document.querySelector('#athlete-table tbody');
 const modal = document.getElementById('athlete-modal');
 const modalTitle = document.getElementById('modal-title');
@@ -223,7 +238,7 @@ async function sendMessage() {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
     try {
-        const response = await fetch(`http://127.0.0.1:8001/chat/?message=${encodeURIComponent(message)}`);
+        const response = await fetch(`http://127.0.0.1:8000/chat/?message=${encodeURIComponent(message)}`);
         const data = await response.json();
         const assistantMessage = data.info; // Assuming the response has an 'info' field
         appendMessage(assistantMessage, 'assistant-message');

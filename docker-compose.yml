@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # 数据库文件将在容器内创建
+      - DATABASE_URL=sqlite+aiosqlite:///./athlete.db
+      - UVICORN_HOST=0.0.0.0
+      - UVICORN_PORT=8000
+
+      - LLM_SERVE=API
+
+      - OPENAI_BASE_URL=https://api.siliconflow.cn/v1/
+      - OPENAI_API_KEY=sk-dkefchuwobrvetovvqnrsxbkixogrnghtewhtddunrafqxnf
+      - OPENAI_MODEL=Qwen/Qwen3-8B
+      # 生产环境请务必修改此值为具体的前端域名，例如 http://your-frontend-domain.com
+      - ALLOWED_ORIGINS=*
+      # 如果 MCP 工具指向的是此服务自身（即 FastAPI 应用本身）
+      # 且此服务通过 `app` 服务名在 Docker 网络内被访问
+      # 则应设置为 http://app:8000/mcp/ (假设 MCP 端点在同一服务和端口)
+      # 但通常 MCP 工具是调用本服务的 API，所以基地址就是本服务的地址
+      # 在单容器部署或通过 Docker 网络访问自身时，需要特别注意
+      # 这里假设是单容器部署，MCP 调用本服务
+      # 如果是多服务架构，需要根据实际情况调整
+      # 例如，如果此服务名为 `athlete-api`，则可能需要设置为 http://athlete-api:8000/mcp/
+      # 但在这里，我们假设它调用的是自身暴露的端点
+      # 因此，如果在容器内调用，应为 http://localhost:8000/mcp/ (因为服务监听 0.0.0.0:8000)
+      # 但如果通过 Docker Compose 网络从另一个服务调用，则应为 http://app:8000/mcp/
+      # 为了简化，我们先假设 MCP 调用的是本服务，且在容器内，所以使用 localhost
+      # 但在多服务场景下，需要根据服务发现机制调整
+      # 注意：在容器内，服务监听 0.0.0.0:8000，但 MCP 客户端在同一个进程中调用自身，所以 localhost 是可以的
+      # 如果 MCP 客户端是另一个独立的进程或容器，则需要网络地址
+      # 当前代码中，AI 助手是在同一个 FastAPI 应用中调用 MCP，所以 localhost 在容器内是正确的
+      # 但为了让其更清晰和适应多服务场景，我们明确设置
+      - MCP_TOOLS_BASE_URL=http://localhost:8000/mcp/
+    # 将数据库文件挂载到本地，以便数据持久化
+    # 注意：如果多个容器实例共享同一个数据库文件，可能会导致并发问题
+    # 在生产环境中，建议使用 PostgreSQL 或 MySQL 等独立数据库服务
+    volumes:
+      - ./athlete.db:/app/athlete.db
+    # 健康检查 (可选)
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 40s

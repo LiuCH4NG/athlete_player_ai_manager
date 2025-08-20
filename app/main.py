@@ -1,12 +1,14 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware # 导入 CORS 中间件
 from sqlalchemy.ext.asyncio import AsyncSession
 from app import crud, models, schemas
 from app.database import engine, AsyncSessionLocal
 
 from fastapi_mcp import FastApiMCP
 from ai_assistant.mcp_app import create_agent, run_agent
+import os # 导入 os 模块以读取环境变量
 
 
 # Create all tables
@@ -21,6 +23,25 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+
+# 配置 CORS
+# 从环境变量读取允许的源，如果没有设置则默认为 ["*"] (允许所有源)
+# 在生产环境中，强烈建议明确设置允许的源，例如 ["http://your-frontend-domain.com"]
+allowed_origins = os.environ.get("ALLOWED_ORIGINS", "*")
+if allowed_origins == "*":
+    origins = ["*"]
+else:
+    # 假设 ALLOWED_ORIGINS 是一个逗号分隔的字符串
+    origins = [origin.strip() for origin in allowed_origins.split(",")]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"], # 允许所有方法 (GET, POST, etc.)
+    allow_headers=["*"], # 允许所有头
+    # expose_headers=["Access-Control-Allow-Origin"] # 如果需要暴露特定头给浏览器
+)
 
 
 # Dependency to get DB session
@@ -153,6 +174,14 @@ app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
 @app.get("/")
 async def read_index():
     return FileResponse("frontend/index.html")
+
+# 为 /favicon.ico 请求提供一个默认的空响应或重定向，以避免 404 错误
+# 这里简单地返回一个空的 favicon.ico 文件响应，或者可以返回一个默认图标
+# 为了简单起见，我们返回一个 204 No Content 响应
+from fastapi.responses import Response
+@app.get("/favicon.ico")
+async def favicon():
+    return Response(status_code=204) # 返回 204 状态码表示无内容
 
 
 @app.get("/chat/")

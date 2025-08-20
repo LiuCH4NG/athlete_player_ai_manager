@@ -69,14 +69,56 @@ uv sync
 
 ## 运行
 
+### 本地开发运行
+
 1.  **启动后端服务**:
     ```bash
-    uvicorn app.main:app --reload --host 0.0.0.0 --port 8001
+    uvicorn app.main:app --reload --host 127.0.0.1 --port 8001
     ```
     (注意：如果前端 `script.js` 中配置的 API 端口是 8001，请将此处的端口改为 8001，或修改 `script.js` 中的 `apiUrl`)
 
 2.  **访问前端界面**:
     在浏览器中打开 `http://127.0.0.1:8000` (或您后端运行的对应端口)。
+
+### Docker 部署运行
+
+项目提供了 `Dockerfile` 和 `docker-compose.yml` 用于容器化部署。
+
+#### 使用 Docker Compose (推荐)
+
+1.  **构建并启动服务**:
+    ```bash
+    docker-compose up --build
+    ```
+    这将构建 Docker 镜像并在端口 `8000` 上启动服务。
+
+2.  **访问应用**:
+    在浏览器中打开 `http://localhost:8000`。
+
+3.  **停止服务**:
+    ```bash
+    docker-compose down
+    ```
+
+#### 使用 Dockerfile 直接构建
+
+1.  **构建镜像**:
+    ```bash
+    docker build -t athlete-player-ai-manager .
+    ```
+
+2.  **运行容器**:
+    ```bash
+    docker run -p 8000:8000 -v $(pwd)/athlete.db:/app/athlete.db athlete-player-ai-manager
+    ```
+    这会将容器的 8000 端口映射到主机的 8000 端口，并挂载本地的 `athlete.db` 文件以实现数据持久化。
+
+3.  **访问应用**:
+    在浏览器中打开 `http://localhost:8000`。
+
+#### 环境变量配置
+
+Docker 部署时可以通过环境变量来配置应用行为，具体变量请参考 `docker-compose.yml` 文件中的 `environment` 部分。
 
 ## API 文档
 

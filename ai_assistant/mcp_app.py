@@ -16,6 +16,7 @@ OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "qwen3:4b")
 
 OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL", "http://127.0.0.1:1234/v1")
 OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-3.5-turbo")
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 
 def get_llm():
     if LLM_SERVE == "OLLAMA":
@@ -23,19 +24,24 @@ def get_llm():
             model=OLLAMA_MODEL,
             base_url=OLLAMA_BASE_URL,
             temperature=0.7,
-            reasoning=True,
+            # reasoning=True,
         )
     else:
         llm = ChatOpenAI(
             model=OPENAI_MODEL,
-            api_key='',
+            api_key=OPENAI_API_KEY,
             base_url=OPENAI_BASE_URL,
             temperature=0.7,
+            reasoning=True,
         )
     return llm
 
 
-def get_mcp_tools(base_url: str = "http://localhost:8001/mcp/"):
+# 从环境变量获取 MCP 工具的基 URL，如果没有设置则使用默认值
+# 注意：这个默认值应该与后端 API 的实际部署地址匹配
+MCP_TOOLS_BASE_URL = os.environ.get("MCP_TOOLS_BASE_URL", "http://localhost:8001/mcp/")
+
+def get_mcp_tools(base_url: str = MCP_TOOLS_BASE_URL):
     client = MultiServerMCPClient(
         {
             "athletes": {"transport": "streamable_http", "url": base_url},
