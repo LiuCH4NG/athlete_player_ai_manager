@@ -53,15 +53,8 @@
 
 ## 安装
 
-确保你已经安装了 `uv` 工具。
-
-```bash
 # 复制环境变量文件
 cp .env.example .env
-
-# 克隆项目
-git clone <repository-url>
-cd athlete_player_ai_manager
 
 # 安装后端依赖
 uv sync

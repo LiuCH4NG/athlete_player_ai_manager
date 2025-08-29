@@ -238,7 +238,7 @@ async function sendMessage() {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
     try {
-        const response = await fetch(`http://127.0.0.1:8000/chat/?message=${encodeURIComponent(message)}`);
+        const response = await fetch(`http://127.0.0.1:8001/chat/?message=${encodeURIComponent(message)}`);
         const data = await response.json();
         const assistantMessage = data.info; // Assuming the response has an 'info' field
         appendMessage(assistantMessage, 'assistant-message');
