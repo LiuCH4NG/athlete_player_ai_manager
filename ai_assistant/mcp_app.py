@@ -23,7 +23,7 @@ def get_llm():
             model=OLLAMA_MODEL,
             base_url=OLLAMA_BASE_URL,
             temperature=0.7,
-            reasoning=True,
+            reasoning=False,
         )
     else:
         llm = ChatOpenAI(

@@ -235,6 +235,10 @@ async function sendMessage() {
         if (typingIndicatorElement.parentNode === chatMessages) {
             chatMessages.removeChild(typingIndicatorElement);
         }
+        // 聊天助手返回后自动刷新运动员列表
+        setTimeout(() => {
+            getAthletes();
+        }, 1000);
     }
 }
 
