@@ -3,28 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>运动员管理</title>
+    <title>医学耗材管理系统</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="frontend/style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>运动员管理</h1>
+            <h1>医学耗材管理系统</h1>
             <div class="toolbar">
-                <button id="add-athlete-btn" class="btn btn-primary">添加运动员</button>
+                <button id="add-supply-btn" class="btn btn-primary">添加耗材</button>
             </div>
             <div class="search-form-container">
                 <form id="search-form" class="search-form">
-                    <input type="text" id="search-name" placeholder="姓名">
-                    <input type="text" id="search-sport-event" placeholder="项目">
-                    <input type="text" id="search-hometown" placeholder="籍贯">
-                    <input type="number" id="search-min-age" placeholder="最小年龄">
-                    <input type="number" id="search-max-age" placeholder="最大年龄">
-                    <input type="number" id="search-min-height" placeholder="最小身高(cm)">
-                    <input type="number" id="search-max-height" placeholder="最大身高(cm)">
-                    <input type="number" id="search-min-weight" placeholder="最小体重(kg)">
-                    <input type="number" id="search-max-weight" placeholder="最大体重(kg)">
+                    <input type="text" id="search-name" placeholder="耗材名称">
+                    <input type="text" id="search-code" placeholder="耗材编码">
+                    <input type="text" id="search-category" placeholder="分类">
+                    <input type="text" id="search-specification" placeholder="规格型号">
+                    <input type="text" id="search-manufacturer" placeholder="生产厂家">
+                    <input type="text" id="search-location" placeholder="存储位置">
+                    <input type="number" id="search-min-price" placeholder="最低单价">
+                    <input type="number" id="search-max-price" placeholder="最高单价">
+                    <input type="number" id="search-min-stock" placeholder="最小库存">
+                    <input type="number" id="search-max-stock" placeholder="最大库存">
                     <button type="submit" class="btn btn-secondary">搜索</button>
                     <button type="button" id="reset-search-btn" class="btn btn-secondary">重置</button>
                 </form>
@@ -32,57 +33,87 @@
         </header>
 
         <main>
-            <table id="athlete-table">
+            <table id="supply-table">
                 <thead>
                     <tr>
-                        <th>姓名</th>
-                        <th>年龄</th>
-                        <th>籍贯</th>
-                        <th>项目</th>
-                        <th>身高(cm)</th>
-                        <th>体重(kg)</th>
+                        <th>名称</th>
+                        <th>编码</th>
+                        <th>分类</th>
+                        <th>规格型号</th>
+                        <th>生产厂家</th>
+                        <th>单位</th>
+                        <th>单价(元)</th>
+                        <th>库存数量</th>
+                        <th>最低库存</th>
+                        <th>有效期</th>
+                        <th>批号</th>
+                        <th>存储位置</th>
                         <th>描述</th>
                         <th>备注</th>
                         <th>操作</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Athlete data will be inserted here -->
+                    <!-- Medical supply data will be inserted here -->
                 </tbody>
             </table>
         </main>
     </div>
 
-    <div id="athlete-modal" class="modal">
+    <div id="supply-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
-            <h2 id="modal-title">添加运动员</h2>
-            <form id="athlete-form">
-                <input type="hidden" id="athlete-id">
+            <h2 id="modal-title">添加医学耗材</h2>
+            <form id="supply-form">
+                <input type="hidden" id="supply-id">
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="name">姓名</label>
-                        <input type="text" id="name" placeholder="请输入姓名" required>
+                        <label for="name">耗材名称</label>
+                        <input type="text" id="name" placeholder="请输入耗材名称" required>
                     </div>
                     <div class="form-group">
-                        <label for="age">年龄</label>
-                        <input type="number" id="age" placeholder="请输入年龄">
+                        <label for="code">耗材编码</label>
+                        <input type="text" id="code" placeholder="请输入耗材编码" required>
                     </div>
                     <div class="form-group">
-                        <label for="hometown">籍贯</label>
-                        <input type="text" id="hometown" placeholder="请输入籍贯">
+                        <label for="category">分类</label>
+                        <input type="text" id="category" placeholder="请输入分类（如：注射器、纱布等）">
                     </div>
                     <div class="form-group">
-                        <label for="sport_event">项目</label>
-                        <input type="text" id="sport_event" placeholder="请输入项目">
+                        <label for="specification">规格型号</label>
+                        <input type="text" id="specification" placeholder="请输入规格型号">
                     </div>
                     <div class="form-group">
-                        <label for="height">身高 (cm)</label>
-                        <input type="number" id="height" placeholder="请输入身高">
+                        <label for="manufacturer">生产厂家</label>
+                        <input type="text" id="manufacturer" placeholder="请输入生产厂家">
                     </div>
                     <div class="form-group">
-                        <label for="weight">体重 (kg)</label>
-                        <input type="number" id="weight" placeholder="请输入体重">
+                        <label for="unit">单位</label>
+                        <input type="text" id="unit" placeholder="请输入单位（个、包、盒等）">
+                    </div>
+                    <div class="form-group">
+                        <label for="unit_price">单价(元)</label>
+                        <input type="number" id="unit_price" placeholder="请输入单价" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="stock_quantity">库存数量</label>
+                        <input type="number" id="stock_quantity" placeholder="请输入库存数量">
+                    </div>
+                    <div class="form-group">
+                        <label for="min_stock">最低库存预警</label>
+                        <input type="number" id="min_stock" placeholder="请输入最低库存数量">
+                    </div>
+                    <div class="form-group">
+                        <label for="expiry_date">有效期</label>
+                        <input type="date" id="expiry_date">
+                    </div>
+                    <div class="form-group">
+                        <label for="batch_number">批号</label>
+                        <input type="text" id="batch_number" placeholder="请输入批号">
+                    </div>
+                    <div class="form-group">
+                        <label for="storage_location">存储位置</label>
+                        <input type="text" id="storage_location" placeholder="请输入存储位置">
                     </div>
                     <div class="form-group" style="grid-column: 1 / -1;">
                         <label for="description">描述</label>
@@ -101,7 +132,7 @@
     </div>
 
     <div id="chat-window">
-        <div id="chat-header">运动员管理助手</div>
+        <div id="chat-header">医学耗材管理助手</div>
         <div id="chat-messages">
         </div>
         <div id="chat-input-container">

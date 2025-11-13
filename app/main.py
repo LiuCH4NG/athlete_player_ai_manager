@@ -30,118 +30,118 @@ async def get_db():
 
 
 @app.post(
-    "/athletes/",
-    response_model=schemas.AthleteInDB,
-    tags=["athletes"],
-    operation_id="create_athlete",
+    "/medical_supplies/",
+    response_model=schemas.MedicalSupplyInDB,
+    tags=["medical_supplies"],
+    operation_id="create_medical_supply",
 )
-async def create_athlete(
-    athlete: schemas.AthleteCreate, db: AsyncSession = Depends(get_db)
+async def create_medical_supply(
+    supply: schemas.MedicalSupplyCreate, db: AsyncSession = Depends(get_db)
 ):
     """
-    创建新的运动员。
+    创建新的医学耗材。
 
-    在数据库中创建新运动员记录并返回创建的运动员信息。
+    在数据库中创建新耗材记录并返回创建的耗材信息。
     """
-    return await crud.create_athlete(db=db, athlete=athlete)
+    return await crud.create_medical_supply(db=db, supply=supply)
 
 
 @app.get(
-    "/athletes/",
-    response_model=list[schemas.AthleteInDB],
-    tags=["athletes"],
-    operation_id="list_athletes",
+    "/medical_supplies/",
+    response_model=list[schemas.MedicalSupplyInDB],
+    tags=["medical_supplies"],
+    operation_id="list_medical_supplies",
 )
-async def read_athletes(
+async def read_medical_supplies(
     skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db)
 ):
     """
-    获取运动员列表。
+    获取医学耗材列表。
 
-    支持分页获取运动员列表，可以指定跳过的记录数和每页的记录数限制。
+    支持分页获取耗材列表，可以指定跳过的记录数和每页的记录数限制。
     """
-    athletes = await crud.get_athletes(db, skip=skip, limit=limit)
-    return athletes
+    supplies = await crud.get_medical_supplies(db, skip=skip, limit=limit)
+    return supplies
 
 
 @app.get(
-    "/athletes/{athlete_id}",
-    response_model=schemas.AthleteInDB,
-    tags=["athletes"],
-    operation_id="get_athlete",
+    "/medical_supplies/{supply_id}",
+    response_model=schemas.MedicalSupplyInDB,
+    tags=["medical_supplies"],
+    operation_id="get_medical_supply",
 )
-async def read_athlete(athlete_id: int, db: AsyncSession = Depends(get_db)):
+async def read_medical_supply(supply_id: int, db: AsyncSession = Depends(get_db)):
     """
-    根据ID获取特定运动员。
+    根据ID获取特定医学耗材。
 
-    通过运动员ID获取单个运动员的详细信息。
+    通过耗材ID获取单个耗材的详细信息。
     """
-    db_athlete = await crud.get_athlete(db, athlete_id=athlete_id)
-    if db_athlete is None:
-        raise HTTPException(status_code=404, detail="Athlete not found")
-    return db_athlete
+    db_supply = await crud.get_medical_supply(db, supply_id=supply_id)
+    if db_supply is None:
+        raise HTTPException(status_code=404, detail="Medical supply not found")
+    return db_supply
 
 
 @app.put(
-    "/athletes/{athlete_id}",
-    response_model=schemas.AthleteInDB,
-    tags=["athletes"],
-    operation_id="update_athlete",
+    "/medical_supplies/{supply_id}",
+    response_model=schemas.MedicalSupplyInDB,
+    tags=["medical_supplies"],
+    operation_id="update_medical_supply",
 )
-async def update_athlete(
-    athlete_id: int, athlete: schemas.AthleteUpdate, db: AsyncSession = Depends(get_db)
+async def update_medical_supply(
+    supply_id: int, supply: schemas.MedicalSupplyUpdate, db: AsyncSession = Depends(get_db)
 ):
     """
-    更新运动员信息。
+    更新医学耗材信息。
 
-    根据运动员ID更新指定运动员的信息。
+    根据耗材ID更新指定耗材的信息。
     """
-    db_athlete = await crud.update_athlete(db, athlete_id=athlete_id, athlete=athlete)
-    if db_athlete is None:
-        raise HTTPException(status_code=404, detail="Athlete not found")
-    return db_athlete
+    db_supply = await crud.update_medical_supply(db, supply_id=supply_id, supply=supply)
+    if db_supply is None:
+        raise HTTPException(status_code=404, detail="Medical supply not found")
+    return db_supply
 
 
 @app.delete(
-    "/athletes/{athlete_id}",
-    response_model=schemas.AthleteInDB,
-    tags=["athletes"],
-    operation_id="delete_athlete",
+    "/medical_supplies/{supply_id}",
+    response_model=schemas.MedicalSupplyInDB,
+    tags=["medical_supplies"],
+    operation_id="delete_medical_supply",
 )
-async def delete_athlete(athlete_id: int, db: AsyncSession = Depends(get_db)):
+async def delete_medical_supply(supply_id: int, db: AsyncSession = Depends(get_db)):
     """
-    删除运动员。
+    删除医学耗材。
 
-    根据运动员ID删除指定的运动员记录。
+    根据耗材ID删除指定的耗材记录。
     """
-    db_athlete = await crud.delete_athlete(db, athlete_id=athlete_id)
-    if db_athlete is None:
-        raise HTTPException(status_code=404, detail="Athlete not found")
-    return db_athlete
+    db_supply = await crud.delete_medical_supply(db, supply_id=supply_id)
+    if db_supply is None:
+        raise HTTPException(status_code=404, detail="Medical supply not found")
+    return db_supply
 
 
 @app.post(
-    "/athletes/search/",
-    response_model=list[schemas.AthleteInDB],
-    tags=["athletes"],
-    operation_id="search_athletes",
+    "/medical_supplies/search/",
+    response_model=list[schemas.MedicalSupplyInDB],
+    tags=["medical_supplies"],
+    operation_id="search_medical_supplies",
 )
-async def search_athletes(
-    search_params: schemas.AthleteSearch,
+async def search_medical_supplies(
+    search_params: schemas.MedicalSupplySearch,
     skip: int = 0,
     limit: int = 10,
     db: AsyncSession = Depends(get_db),
 ):
     """
-    搜索运动员。
+    搜索医学耗材。
 
-    根据一个或多个查询参数搜索运动员，支持在姓名、项目、籍贯、描述、备注等字段中搜索。
-    返回匹配的运动员列表，支持分页。
+    根据一个或多个查询参数搜索耗材，支持在名称、编码、分类、规格、厂家、存储位置等字段中搜索。
+    返回匹配的耗材列表，支持分页。
     """
-    athletes = await crud.search_athletes(
+    supplies = await crud.search_medical_supplies(
         db, search_params=search_params, skip=skip, limit=limit
     )
-    return athletes
+    return supplies
 
 
 mcp = FastApiMCP(app)

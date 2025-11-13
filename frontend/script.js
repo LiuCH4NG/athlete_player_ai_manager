@@ -1,22 +1,23 @@
-const apiUrl = 'http://127.0.0.1:8001/athletes/';
-const tableBody = document.querySelector('#athlete-table tbody');
-const modal = document.getElementById('athlete-modal');
+const apiUrl = 'http://127.0.0.1:8001/medical_supplies/';
+const tableBody = document.querySelector('#supply-table tbody');
+const modal = document.getElementById('supply-modal');
 const modalTitle = document.getElementById('modal-title');
-const form = document.getElementById('athlete-form');
-const addAthleteBtn = document.getElementById('add-athlete-btn');
+const form = document.getElementById('supply-form');
+const addSupplyBtn = document.getElementById('add-supply-btn');
 const closeBtn = document.querySelector('.close-btn');
 
 // Search form elements
 const searchForm = document.getElementById('search-form');
 const searchName = document.getElementById('search-name');
-const searchSportEvent = document.getElementById('search-sport-event');
-const searchHometown = document.getElementById('search-hometown');
-const searchMinAge = document.getElementById('search-min-age');
-const searchMaxAge = document.getElementById('search-max-age');
-const searchMinHeight = document.getElementById('search-min-height');
-const searchMaxHeight = document.getElementById('search-max-height');
-const searchMinWeight = document.getElementById('search-min-weight');
-const searchMaxWeight = document.getElementById('search-max-weight');
+const searchCode = document.getElementById('search-code');
+const searchCategory = document.getElementById('search-category');
+const searchSpecification = document.getElementById('search-specification');
+const searchManufacturer = document.getElementById('search-manufacturer');
+const searchLocation = document.getElementById('search-location');
+const searchMinPrice = document.getElementById('search-min-price');
+const searchMaxPrice = document.getElementById('search-max-price');
+const searchMinStock = document.getElementById('search-min-stock');
+const searchMaxStock = document.getElementById('search-max-stock');
 const resetSearchBtn = document.getElementById('reset-search-btn');
 
 // Show modal
@@ -28,12 +29,12 @@ function showModal() {
 function hideModal() {
     modal.style.display = 'none';
     form.reset();
-    document.getElementById('athlete-id').value = '';
+    document.getElementById('supply-id').value = '';
 }
 
 // Open modal for adding
-addAthleteBtn.addEventListener('click', () => {
-    modalTitle.textContent = '添加运动员';
+addSupplyBtn.addEventListener('click', () => {
+    modalTitle.textContent = '添加医学耗材';
     showModal();
 });
 
@@ -45,8 +46,8 @@ window.addEventListener('click', (e) => {
     }
 });
 
-// Fetch and display athletes
-async function getAthletes(searchParams = {}) {
+// Fetch and display medical supplies
+async function getMedicalSupplies(searchParams = {}) {
     try {
         let response;
         if (Object.keys(searchParams).length > 0) {
@@ -61,44 +62,56 @@ async function getAthletes(searchParams = {}) {
             response = await fetch(apiUrl);
         }
 
-        const athletes = await response.json();
+        const supplies = await response.json();
 
         tableBody.innerHTML = '';
-        athletes.forEach(athlete => {
+        supplies.forEach(supply => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${athlete.name || ''}</td>
-                <td>${athlete.age || ''}</td>
-                <td>${athlete.hometown || ''}</td>
-                <td>${athlete.sport_event || ''}</td>
-                <td>${athlete.height || ''}</td>
-                <td>${athlete.weight || ''}</td>
-                <td>${athlete.description || ''}</td>
-                <td>${athlete.remarks || ''}</td>
+                <td>${supply.name || ''}</td>
+                <td>${supply.code || ''}</td>
+                <td>${supply.category || ''}</td>
+                <td>${supply.specification || ''}</td>
+                <td>${supply.manufacturer || ''}</td>
+                <td>${supply.unit || ''}</td>
+                <td>${supply.unit_price || ''}</td>
+                <td>${supply.stock_quantity || ''}</td>
+                <td>${supply.min_stock || ''}</td>
+                <td>${supply.expiry_date || ''}</td>
+                <td>${supply.batch_number || ''}</td>
+                <td>${supply.storage_location || ''}</td>
+                <td>${supply.description || ''}</td>
+                <td>${supply.remarks || ''}</td>
                 <td class="actions">
-                    <button class="edit-btn" onclick="editAthlete(${athlete.id})">编辑</button>
-                    <button class="delete-btn" onclick="deleteAthlete(${athlete.id})">删除</button>
+                    <button class="edit-btn" onclick="editMedicalSupply(${supply.id})">编辑</button>
+                    <button class="delete-btn" onclick="deleteMedicalSupply(${supply.id})">删除</button>
                 </td>
             `;
             tableBody.appendChild(row);
         });
     } catch (error) {
-        console.error('获取运动员列表失败:', error);
+        console.error('获取耗材列表失败:', error);
     }
 }
 
-// Add or update an athlete
+// Add or update a medical supply
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const id = document.getElementById('athlete-id').value;
-    const athleteData = {
+    const id = document.getElementById('supply-id').value;
+    const supplyData = {
         name: document.getElementById('name').value,
-        age: parseInt(document.getElementById('age').value) || null,
-        hometown: document.getElementById('hometown').value,
-        sport_event: document.getElementById('sport_event').value,
-        height: parseFloat(document.getElementById('height').value) || null,
-        weight: parseFloat(document.getElementById('weight').value) || null,
+        code: document.getElementById('code').value,
+        category: document.getElementById('category').value,
+        specification: document.getElementById('specification').value,
+        manufacturer: document.getElementById('manufacturer').value,
+        unit: document.getElementById('unit').value,
+        unit_price: parseFloat(document.getElementById('unit_price').value) || null,
+        stock_quantity: parseInt(document.getElementById('stock_quantity').value) || null,
+        min_stock: parseInt(document.getElementById('min_stock').value) || null,
+        expiry_date: document.getElementById('expiry_date').value,
+        batch_number: document.getElementById('batch_number').value,
+        storage_location: document.getElementById('storage_location').value,
         description: document.getElementById('description').value,
         remarks: document.getElementById('remarks').value,
     };
@@ -109,86 +122,93 @@ form.addEventListener('submit', async (e) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(athleteData),
+            body: JSON.stringify(supplyData),
         });
 
         if (response.ok) {
             hideModal();
-            getAthletes();
+            getMedicalSupplies();
         } else {
-            console.error('保存运动员失败:', await response.text());
+            console.error('保存耗材失败:', await response.text());
         }
     } catch (error) {
-        console.error('保存运动员失败:', error);
+        console.error('保存耗材失败:', error);
     }
 });
 
-// Edit an athlete
-async function editAthlete(id) {
+// Edit a medical supply
+async function editMedicalSupply(id) {
     try {
         const response = await fetch(`${apiUrl}${id}`);
-        const athlete = await response.json();
+        const supply = await response.json();
 
-        modalTitle.textContent = '编辑运动员';
-        document.getElementById('athlete-id').value = athlete.id;
-        document.getElementById('name').value = athlete.name || '';
-        document.getElementById('age').value = athlete.age || '';
-        document.getElementById('hometown').value = athlete.hometown || '';
-        document.getElementById('sport_event').value = athlete.sport_event || '';
-        document.getElementById('height').value = athlete.height || '';
-        document.getElementById('weight').value = athlete.weight || '';
-        document.getElementById('description').value = athlete.description || '';
-        document.getElementById('remarks').value = athlete.remarks || '';
+        modalTitle.textContent = '编辑医学耗材';
+        document.getElementById('supply-id').value = supply.id;
+        document.getElementById('name').value = supply.name || '';
+        document.getElementById('code').value = supply.code || '';
+        document.getElementById('category').value = supply.category || '';
+        document.getElementById('specification').value = supply.specification || '';
+        document.getElementById('manufacturer').value = supply.manufacturer || '';
+        document.getElementById('unit').value = supply.unit || '';
+        document.getElementById('unit_price').value = supply.unit_price || '';
+        document.getElementById('stock_quantity').value = supply.stock_quantity || '';
+        document.getElementById('min_stock').value = supply.min_stock || '';
+        document.getElementById('expiry_date').value = supply.expiry_date || '';
+        document.getElementById('batch_number').value = supply.batch_number || '';
+        document.getElementById('storage_location').value = supply.storage_location || '';
+        document.getElementById('description').value = supply.description || '';
+        document.getElementById('remarks').value = supply.remarks || '';
 
         showModal();
     } catch (error) {
-        console.error('获取运动员信息失败:', error);
+        console.error('获取耗材信息失败:', error);
     }
 }
 
-// Delete an athlete
-async function deleteAthlete(id) {
-    if (confirm('您确定要删除这位运动员吗？')) {
+// Delete a medical supply
+async function deleteMedicalSupply(id) {
+    if (confirm('您确定要删除这个耗材吗？')) {
         try {
             const response = await fetch(`${apiUrl}${id}`, {
                 method: 'DELETE',
             });
 
             if (response.ok) {
-                getAthletes();
+                getMedicalSupplies();
             } else {
-                console.error('删除运动员失败:', await response.text());
+                console.error('删除耗材失败:', await response.text());
             }
         } catch (error) {
-            console.error('删除运动员失败:', error);
+            console.error('删除耗材失败:', error);
         }
     }
 }
 
-// Search athletes
+// Search medical supplies
 searchForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const searchParams = {};
     if (searchName.value) searchParams.name = searchName.value;
-    if (searchSportEvent.value) searchParams.sport_event = searchSportEvent.value;
-    if (searchHometown.value) searchParams.hometown = searchHometown.value;
-    if (searchMinAge.value) searchParams.min_age = parseInt(searchMinAge.value);
-    if (searchMaxAge.value) searchParams.max_age = parseInt(searchMaxAge.value);
-    if (searchMinHeight.value) searchParams.min_height = parseFloat(searchMinHeight.value);
-    if (searchMaxHeight.value) searchParams.max_height = parseFloat(searchMaxHeight.value);
-    if (searchMinWeight.value) searchParams.min_weight = parseFloat(searchMinWeight.value);
-    if (searchMaxWeight.value) searchParams.max_weight = parseFloat(searchMaxWeight.value);
+    if (searchCode.value) searchParams.code = searchCode.value;
+    if (searchCategory.value) searchParams.category = searchCategory.value;
+    if (searchSpecification.value) searchParams.specification = searchSpecification.value;
+    if (searchManufacturer.value) searchParams.manufacturer = searchManufacturer.value;
+    if (searchLocation.value) searchParams.storage_location = searchLocation.value;
+    if (searchMinPrice.value) searchParams.min_price = parseFloat(searchMinPrice.value);
+    if (searchMaxPrice.value) searchParams.max_price = parseFloat(searchMaxPrice.value);
+    if (searchMinStock.value) searchParams.min_stock = parseInt(searchMinStock.value);
+    if (searchMaxStock.value) searchParams.max_stock = parseInt(searchMaxStock.value);
 
-    getAthletes(searchParams);
+    getMedicalSupplies(searchParams);
 });
 
 resetSearchBtn.addEventListener('click', () => {
     searchForm.reset();
-    getAthletes({}); // Fetch all athletes
+    getMedicalSupplies({}); // Fetch all supplies
 });
 
 // Initial load
-getAthletes();
+getMedicalSupplies();
 
 // Chat Assistant
 const chatFab = document.getElementById('chat-fab');
@@ -204,7 +224,7 @@ chatFab.addEventListener('click', () => {
 
     // Add initial message if chat is opened for the first time
     if (!isChatOpen && chatMessages.children.length === 0) {
-        appendMessage('您好！我是您的运动员管理助手，有什么可以帮助您的吗？', 'assistant-message');
+        appendMessage('您好！我是您的医学耗材管理助手，有什么可以帮助您的吗？', 'assistant-message');
     }
 });
 
